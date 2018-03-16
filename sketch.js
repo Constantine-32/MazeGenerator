@@ -22,27 +22,27 @@ class Cell {
   }
 
   isVisited() {
-    return this.v;
+    return this.v
   }
 
   setVisited() {
-    this.v = true;
+    this.v = true
   }
 
   breakTop() {
-    this.w[0] = false;
+    this.w[0] = false
   }
 
   breakRig() {
-    this.w[1] = false;
+    this.w[1] = false
   }
 
   breakBot() {
-    this.w[2] = false;
+    this.w[2] = false
   }
 
   breakLef() {
-    this.w[3] = false;
+    this.w[3] = false
   }
 }
 
@@ -86,65 +86,65 @@ class Grid {
     else return null
   }
 
-  removeWalls(a, b) {
-    let x = a.x - b.x;
+  static removeWalls(a, b) {
+    let x = a.x - b.x
     if (x === 1) {
-      a.breakLef();
-      b.breakRig();
+      a.breakLef()
+      b.breakRig()
     } else if (x === -1) {
-      a.breakRig();
-      b.breakLef();
+      a.breakRig()
+      b.breakLef()
     }
-    let y = a.y - b.y;
+    let y = a.y - b.y
     if (y === 1) {
-      a.breakTop();
-      b.breakBot();
+      a.breakTop()
+      b.breakBot()
     } else if (y === -1) {
-      a.breakBot();
-      b.breakTop();
+      a.breakBot()
+      b.breakTop()
     }
   }
 
   draw() {
-    background('#111');
+    background('#111')
 
     for (let cell of this.grid) {
       if (cell.isVisited()) {
-        noStroke();
-        fill('#222');
-        rect(cell.x * this.size + 1, cell.y * this.size + 1, this.size, this.size);
+        noStroke()
+        fill('#222')
+        rect(cell.x * this.size + 1, cell.y * this.size + 1, this.size, this.size)
       }
     }
     for (let cell of this.stack) {
-      noStroke();
-      fill('#222');
-      rect(cell.x * this.size, cell.y * this.size, this.size, this.size);
+      noStroke()
+      fill('#222')
+      rect(cell.x * this.size, cell.y * this.size, this.size, this.size)
     }
 
     for (let cell of this.grid)
-      cell.draw();
+      cell.draw()
 
-    fill('#eee');
-    rect(this.current.x * this.size, this.current.y * this.size, this.size, this.size);
+    fill('#eee')
+    rect(this.current.x * this.size, this.current.y * this.size, this.size, this.size)
 
     if (this.hasUnvisitedNeighbour() || this.stack.size() > 0) {
-      let next = this.getUnvisitedNeighbour(this.current.x, this.current.y);
+      let next = this.getUnvisitedNeighbour(this.current.x, this.current.y)
       if (next !== null) {
-        this.stack.push(this.current);
-        this.removeWalls(this.current, next);
-        this.current = next;
-        this.current.setVisited();
+        this.stack.push(this.current)
+        Grid.removeWalls(this.current, next)
+        this.current = next
+        this.current.setVisited()
       } else if (this.stack.length !== 0) {
-        this.current = this.stack.pop();
+        this.current = this.stack.pop()
       }
     }
   }
 }
 
-const row = 40;
-const col = 40;
-const size = 10;
-const grid = new Grid(row, col, size);
+const row = 40
+const col = 40
+const size = 10
+const grid = new Grid(row, col, size)
 
 let cnv
 

@@ -115,26 +115,29 @@ class Grid {
         rect(cell.x * this.size + 1, cell.y * this.size + 1, this.size, this.size)
       }
     }
+
     for (let cell of this.stack) {
       noStroke()
-      fill('#222')
+      fill('#333')
       rect(cell.x * this.size, cell.y * this.size, this.size, this.size)
     }
 
     for (let cell of this.grid)
       cell.draw()
 
-    fill('#eee')
-    rect(this.current.x * this.size, this.current.y * this.size, this.size, this.size)
+    if (this.stack.length > 0) {
+      fill('#eee')
+      rect(this.current.x * this.size, this.current.y * this.size, this.size, this.size)
+    }
 
-    if (this.hasUnvisitedNeighbour() || this.stack.size() > 0) {
+    if (this.hasUnvisitedNeighbour() || this.stack.length > 0) {
       let next = this.getUnvisitedNeighbour(this.current.x, this.current.y)
       if (next !== null) {
         this.stack.push(this.current)
         Grid.removeWalls(this.current, next)
         this.current = next
         this.current.setVisited()
-      } else if (this.stack.length !== 0) {
+      } else if (this.stack.length > 0) {
         this.current = this.stack.pop()
       }
     }

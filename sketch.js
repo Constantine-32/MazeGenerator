@@ -1,20 +1,21 @@
 'use strict';
 
 class Cell {
-  constructor(x, y, s) {
+  constructor(x, y, d) {
     this.x = x
     this.y = y
-    this.s = s
+    this.d = d
     this.w = [true, true, true, true]
     this.v = false
   }
 
   draw() {
-    let x0 = this.x * this.s
-    let y0 = this.y * this.s
-    let x1 = x0 + this.s
-    let y1 = y0 + this.s
-    stroke('#111')
+    const s = height / this.d
+    let x0 = this.x * s
+    let y0 = this.y * s
+    let x1 = x0 + s
+    let y1 = y0 + s
+    stroke('#0e0e0e')
     if (this.w[0]) line(x0, y0, x1, y0)
     if (this.w[1]) line(x1, y0, x1, y1)
     if (this.w[2]) line(x1, y1, x0, y1)
@@ -47,14 +48,13 @@ class Cell {
 }
 
 class Grid {
-  constructor(row, col, size) {
+  constructor(row, col) {
     this.row = row
     this.col = col
-    this.size = size
     this.grid = []
     for (let y = 0; y < row; y++)
       for (let x = 0; x < col; x++)
-        this.grid[y * col + x] = new Cell(x, y, size)
+        this.grid[y * col + x] = new Cell(x, y, this.row)
     this.current = this.grid[0]
     this.current.setVisited()
     this.stack = []
@@ -106,20 +106,21 @@ class Grid {
   }
 
   draw() {
-    background('#111')
+    const size = height / this.row
+    background('#0e0e0e')
 
     for (let cell of this.grid) {
       if (cell.isVisited()) {
         noStroke()
         fill('#222')
-        rect(cell.x * this.size + 1, cell.y * this.size + 1, this.size, this.size)
+        rect(cell.x * size + 1, cell.y * size + 1, size, size)
       }
     }
 
     for (let cell of this.stack) {
       noStroke()
       fill('#333')
-      rect(cell.x * this.size, cell.y * this.size, this.size, this.size)
+      rect(cell.x * size, cell.y * size, size, size)
     }
 
     for (let cell of this.grid)
@@ -127,7 +128,7 @@ class Grid {
 
     if (this.stack.length > 0) {
       fill('#eee')
-      rect(this.current.x * this.size, this.current.y * this.size, this.size, this.size)
+      rect(this.current.x * size, this.current.y * size, size, size)
     }
 
     if (this.hasUnvisitedNeighbour() || this.stack.length > 0) {
@@ -144,29 +145,28 @@ class Grid {
   }
 }
 
-const row = 40
-const col = 40
-const size = 10
-const grid = new Grid(row, col, size)
-
-let cnv
-
-function centerCanvas() {
-  let x = (windowWidth - width) / 2
-  let y = (windowHeight - height) / 2
-  cnv.position(x, y)
-}
+const grid = new Grid(50, 50)
 
 function setup() {
-  cnv = createCanvas(col * size + 1, row * size + 1)
-  centerCanvas()
-  background(255, 0, 200)
-  frameRate(20)
-  grid.draw()
+  createCenteredCanvas()
+  frameRate(60)
+  draw()
 }
 
 function windowResized() {
-  centerCanvas()
+  createCenteredCanvas()
+  draw()
+}
+
+function createCenteredCanvas() {
+  const size =
+    (windowWidth <= 540 || windowHeight <= 630) +
+    (windowWidth <= 960 || windowHeight <= 800)
+  const dim = [600, 450, 300][size]
+  createCanvas(dim, dim).position(
+    (windowWidth - width) / 2,
+    (windowHeight - height) / 2
+  )
 }
 
 function draw() {
